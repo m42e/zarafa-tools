@@ -8,7 +8,7 @@ import pprint
 
 from plugintemplates import *
 
-class moveToKeyword(IMapiDAgentPlugin):
+class moveToTag(IMapiDAgentPlugin):
 
     createFolder = 0
 
