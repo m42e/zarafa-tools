@@ -30,6 +30,10 @@ movetopublic.py
 =====
 Move incoming mail for certain recipients to a folder in the public store. 
 
+moveToTag.py
+=====
+Using e-mail addresses like ```user+tag@domain.tld``` (and have postfix configured to allow these see receipient_delimiter) the incomming mail is moved into the specific folder, if exists. If not the tag is appended to the subject.
+
 uudecode.py
 =====
 Convert uu-encoded elements in body to separate attachments.

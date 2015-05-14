@@ -21,11 +21,19 @@ class moveToKeyword(IMapiDAgentPlugin):
         address = message.GetProps([namedprop_id], 0)[0]
 
         mailto = address.Value
+        if mailto == '':
+            return MP_CONTINUE
         elements = re.split('-|\+|@', mailto)
+        # here we should have three elements:
+        # - the receiver
+        # - the tag <-- thats what we interested in
+        # - the domain
+        if len(elements) < 3:
+            return MP_CONTINUE
         tag = elements[1]
         found = 0
         # Search for folder only If we do not want to create it anyway
-        if createFolder == 0:
+        if self.createFolder == 0:
             folderid = store.GetProps([PR_IPM_SUBTREE_ENTRYID], 0)[0].Value
             folder2 = session.OpenEntry(folderid, None, 0)
             table = folder.GetHierarchyTable(0)
@@ -36,7 +44,7 @@ class moveToKeyword(IMapiDAgentPlugin):
                 if row[0].Value == tag:
                     found = 1
 
-        if createFolder == 1 or found == 1:
+        if self.createFolder == 1 or found == 1:
             folder = folder.CreateFolder(FOLDER_GENERIC, tag.decode('utf-8'), u''.decode('utf-8'), None, MAPI_UNICODE|OPEN_IF_EXISTS)
             #now we have the folder, lets save the message
             msgnew = folder.CreateMessage(None, 0)
@@ -53,7 +61,7 @@ class moveToKeyword(IMapiDAgentPlugin):
         # in case we do not have a folder and do not want to create one, 
         # we add the tag to the subject
         subject = message.GetProps([PR_SUBJECT],0)[0].Value
-        subject = "%s [%s]" % (subject, subelem)
+        subject = "%s [%s]" % (subject, tag)
         message.SetProps([SPropValue(PR_SUBJECT, subject)])
         return MP_CONTINUE
 
